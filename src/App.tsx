@@ -4,9 +4,11 @@
 import { FC, useState, useRef, useEffect } from 'react'
 import { socketService } from './socket';
 import { Hands, Results } from '@mediapipe/hands';
+import { Pose } from '@mediapipe/pose';
 import { Camera } from '@mediapipe/camera_utils';
 import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { FaceMesh } from '@mediapipe/face_mesh';
 
 // Initialize Gemini using .env variable (Vite/CRA)
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
@@ -63,6 +65,8 @@ const App: FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isCameraOpen, setIsCameraOpen] = useState(false)
   const handsRef = useRef<Hands | null>(null)
+  const poseRef = useRef<Pose | null>(null)
+  const faceMeshRef = useRef<FaceMesh | null>(null)
   const [isRecording, setIsRecording] = useState(false)
   const recordedSignsRef = useRef<string[]>([])
   const [currentLetter, setCurrentLetter] = useState<string>('');
@@ -71,6 +75,7 @@ const App: FC = () => {
   const [debugInfo, setDebugInfo] = useState<any>(null);
   const [handDistance, setHandDistance] = useState<'too_far' | 'too_close' | 'good' | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [poseLandmarks, setPoseLandmarks] = useState<any[]>([]);
 
   const processWithGemini = async (landmarks: any) => {
     try {
@@ -276,15 +281,44 @@ Just the letter (A-Z) or "unknown"`;
   const setupHandTracking = () => {
     if (!videoeRef.current || !canvasRef.current) return;
 
+    // Initialize Hands
     const hands = new Hands({
       locateFile: (file) => {
         return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
       }
     });
 
+    // Initialize Pose
+    const pose = new Pose({
+      locateFile: (file) => {
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
+      }
+    });
+
+    // Initialize Face Mesh
+    const faceMesh = new FaceMesh({
+      locateFile: (file) => {
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
+      }
+    });
+
     hands.setOptions({
       maxNumHands: 2,
       modelComplexity: 1,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
+    });
+
+    pose.setOptions({
+      modelComplexity: 1,
+      smoothLandmarks: true,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
+    });
+
+    faceMesh.setOptions({
+      maxNumFaces: 1,
+      refineLandmarks: true,
       minDetectionConfidence: 0.5,
       minTrackingConfidence: 0.5
     });
@@ -305,11 +339,12 @@ Just the letter (A-Z) or "unknown"`;
         for (const landmarks of results.multiHandLandmarks) {
           drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
             color: '#00FF00',
-            lineWidth: 2
+            lineWidth: 1
           });
           drawLandmarks(canvasCtx, landmarks, {
             color: '#FF0000',
-            lineWidth: 1
+            lineWidth: 0.5,
+            radius: 1
           });
 
           // Process landmarks for ASL recognition
@@ -318,7 +353,6 @@ Just the letter (A-Z) or "unknown"`;
             const recognizedLetter = recognizeLetter(fingerStates);
 
             if (recognizedLetter) {
-              // Add a small delay before recognizing a new letter
               if (recognitionTimeoutRef.current) {
                 clearTimeout(recognitionTimeoutRef.current);
               }
@@ -336,10 +370,81 @@ Just the letter (A-Z) or "unknown"`;
       canvasCtx.restore();
     });
 
+    pose.onResults((results) => {
+      if (!canvasRef.current || !videoeRef.current) return;
+
+      const canvasCtx = canvasRef.current.getContext('2d');
+      if (!canvasCtx) return;
+
+      // Draw pose landmarks
+      if (results.poseLandmarks) {
+        drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
+          color: '#00FF00',
+          lineWidth: 1
+        });
+        drawLandmarks(canvasCtx, results.poseLandmarks, {
+          color: '#FF0000',
+          lineWidth: 0.5,
+          radius: 1
+        });
+        
+        // Update pose landmarks for graph
+        setPoseLandmarks(results.poseLandmarks);
+      }
+    });
+
+    faceMesh.onResults((results) => {
+      if (!canvasRef.current || !videoeRef.current) return;
+
+      const canvasCtx = canvasRef.current.getContext('2d');
+      if (!canvasCtx) return;
+
+      // Draw face mesh
+      if (results.multiFaceLandmarks) {
+        for (const landmarks of results.multiFaceLandmarks) {
+          drawConnectors(canvasCtx, landmarks, FACEMESH_TESSELATION, {
+            color: '#C0C0C070',
+            lineWidth: 1
+          });
+          drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYE, {
+            color: '#FF3030',
+            lineWidth: 1
+          });
+          drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYEBROW, {
+            color: '#FF3030',
+            lineWidth: 1
+          });
+          drawConnectors(canvasCtx, landmarks, FACEMESH_LEFT_EYE, {
+            color: '#30FF30',
+            lineWidth: 1
+          });
+          drawConnectors(canvasCtx, landmarks, FACEMESH_LEFT_EYEBROW, {
+            color: '#30FF30',
+            lineWidth: 1
+          });
+          drawConnectors(canvasCtx, landmarks, FACEMESH_FACE_OVAL, {
+            color: '#E0E0E0',
+            lineWidth: 1
+          });
+          drawConnectors(canvasCtx, landmarks, FACEMESH_LIPS, {
+            color: '#E0E0E0',
+            lineWidth: 1
+          });
+          drawLandmarks(canvasCtx, landmarks, {
+            color: '#FF0000',
+            lineWidth: 0.5,
+            radius: 1
+          });
+        }
+      }
+    });
+
     const camera = new Camera(videoeRef.current, {
       onFrame: async () => {
         if (videoeRef.current) {
           await hands.send({ image: videoeRef.current });
+          await pose.send({ image: videoeRef.current });
+          await faceMesh.send({ image: videoeRef.current });
         }
       },
       width: 1280,
@@ -348,6 +453,8 @@ Just the letter (A-Z) or "unknown"`;
 
     camera.start();
     handsRef.current = hands;
+    poseRef.current = pose;
+    faceMeshRef.current = faceMesh;
   };
 
   const startCamera = async () => {
@@ -376,6 +483,12 @@ Just the letter (A-Z) or "unknown"`;
     }
     if (handsRef.current) {
       handsRef.current.close();
+    }
+    if (poseRef.current) {
+      poseRef.current.close();
+    }
+    if (faceMeshRef.current) {
+      faceMeshRef.current.close();
     }
     socketService.disconnect();
     setIsCameraOpen(false);
@@ -546,6 +659,21 @@ Just the letter (A-Z) or "unknown"`;
                 </div>
               </div>
             )}
+            {/* Add Pose Landmarks Graph */}
+            {poseLandmarks.length > 0 && (
+              <div className="mt-4 p-4 bg-black bg-opacity-20 rounded-lg text-sm text-white">
+                <h3 className="font-semibold mb-2">Pose Landmarks (X-Y Coordinates):</h3>
+                <div className="space-y-1 max-h-40 overflow-y-auto">
+                  {poseLandmarks.map((landmark, index) => (
+                    <div key={index} className="flex justify-between">
+                      <span>Point {index}:</span>
+                      <span>X: {landmark.x.toFixed(3)}</span>
+                      <span>Y: {landmark.y.toFixed(3)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -561,6 +689,52 @@ const HAND_CONNECTIONS: [number, number][] = [
   [0, 13], [13, 14], [14, 15], [15, 16], // ring finger
   [0, 17], [17, 18], [18, 19], [19, 20], // pinky
   [0, 5], [5, 9], [9, 13], [13, 17], [0, 17] // palm
+];
+
+// Add POSE_CONNECTIONS constant
+const POSE_CONNECTIONS: [number, number][] = [
+  [11, 12], [11, 13], [13, 15], [12, 14], [14, 16], // arms
+  [11, 23], [12, 24], [23, 24], [23, 25], [24, 26], [25, 27], [26, 28], // torso and legs
+  [0, 1], [1, 2], [2, 3], [3, 7], [0, 4], [4, 5], [5, 6], [6, 8], // face
+  [9, 10], [11, 12], [12, 14], [14, 16], [11, 13], [13, 15], [15, 17], [16, 18], [17, 19], [18, 20], [19, 21], [20, 22] // hands
+];
+
+// Add Face Mesh connections
+const FACEMESH_TESSELATION: [number, number][] = [
+  // ... (this is a large array of connections, I'll add it in the next edit if needed)
+];
+
+const FACEMESH_RIGHT_EYE: [number, number][] = [
+  [33, 7], [7, 163], [163, 144], [144, 145], [145, 153], [153, 154], [154, 155], [155, 133],
+  [33, 246], [246, 161], [161, 160], [160, 159], [159, 158], [158, 157], [157, 173], [173, 133]
+];
+
+const FACEMESH_RIGHT_EYEBROW: [number, number][] = [
+  [70, 63], [63, 105], [105, 66], [66, 107], [107, 55], [55, 65], [65, 52], [52, 53], [53, 46]
+];
+
+const FACEMESH_LEFT_EYE: [number, number][] = [
+  [362, 382], [382, 381], [381, 380], [380, 374], [374, 373], [373, 390], [390, 249], [249, 263],
+  [362, 398], [398, 384], [384, 385], [385, 386], [386, 387], [387, 388], [388, 466], [466, 263]
+];
+
+const FACEMESH_LEFT_EYEBROW: [number, number][] = [
+  [336, 296], [296, 334], [334, 293], [293, 300], [300, 276], [276, 283], [283, 282], [282, 295], [295, 285]
+];
+
+const FACEMESH_FACE_OVAL: [number, number][] = [
+  [10, 338], [338, 297], [297, 332], [332, 284], [284, 251], [251, 389], [389, 356], [356, 454],
+  [454, 323], [323, 361], [361, 288], [288, 397], [397, 365], [365, 379], [379, 378], [378, 400],
+  [400, 377], [377, 152], [152, 148], [148, 176], [176, 149], [149, 150], [150, 136], [136, 172],
+  [172, 58], [58, 132], [132, 93], [93, 234], [234, 127], [127, 162], [162, 21], [21, 54], [54, 103], [103, 67], [67, 109], [109, 10]
+];
+
+const FACEMESH_LIPS: [number, number][] = [
+  [61, 146], [146, 91], [91, 181], [181, 84], [84, 17], [17, 314], [314, 405], [405, 321], [321, 375],
+  [375, 291], [61, 185], [185, 40], [40, 39], [39, 37], [37, 0], [0, 267], [267, 269], [269, 270], [270, 409],
+  [409, 291], [78, 95], [95, 88], [88, 178], [178, 87], [87, 14], [14, 317], [317, 402], [402, 318], [318, 324],
+  [324, 308], [78, 191], [191, 80], [80, 81], [81, 82], [82, 13], [13, 312], [312, 311], [311, 310], [310, 415],
+  [415, 308]
 ];
 
 export default App; 
