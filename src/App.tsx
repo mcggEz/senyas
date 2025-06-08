@@ -616,28 +616,36 @@ Just the letter (A-Z) or "unknown"`;
                   </svg>
                   <span className="text-lg font-medium">{isRecording ? 'Stop Recording' : 'Start Recording'}</span>
                 </button>
-                <button 
-                  onClick={clearText}
-                  className="bg-[#333333] hover:bg-[#404040] text-[#D4D4D4] px-6 py-3 rounded-md shadow-lg transition-all duration-200 flex items-center gap-2"
-                >
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    className="h-6 w-6" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                  <span className="text-lg font-medium">Clear Text</span>
-                </button>
+               
               </>
             )}
           </div>
         </div>
         <div className="w-96 h-full flex flex-col">
           <div className="bg-[#252526] backdrop-blur-lg rounded-lg shadow-lg p-6 flex-1 overflow-hidden flex flex-col border border-[#333333]">
-            <h2 className="text-2xl font-bold mb-4 text-[#D4D4D4]">Recognized Text</h2>
+            <div className='flex justify-between items-center mb-6'>
+              <div className="flex items-center gap-3">
+                <h2 className="text-2xl font-bold text-[#D4D4D4]">Recognized Text</h2>
+             
+              </div>
+              <button 
+                    onClick={clearText}
+                    className="bg-[#2A2A2A] hover:bg-[#333333] text-[#D4D4D4] px-4 py-2.5 rounded-lg shadow-md transition-all duration-200 flex items-center gap-2 border border-[#404040] hover:border-[#505050] group"
+                  >
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      className="h-5 w-5 text-red-400 group-hover:text-red-300 transition-colors" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    <span className="font-medium text-sm">Clear Text</span>
+                  </button>
+            </div>
+
+            
             <div className="flex-1 overflow-y-auto bg-[#1E1E1E] rounded-lg p-4 border border-[#333333]">
               <p className="text-xl text-[#D4D4D4] whitespace-pre-wrap break-words">{currentLetter || 'No text recognized yet'}</p>
             </div>
