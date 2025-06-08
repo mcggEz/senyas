@@ -430,8 +430,8 @@ Just the letter (A-Z) or "unknown"`;
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col">
-      <nav className="flex justify-between items-center p-4 bg-gray-800 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 flex flex-col">
+      <nav className="flex justify-between items-center p-4 bg-black bg-opacity-50 text-white">
         <div className="text-xl font-bold">Senyas</div>
         <div>Notification</div>
       </nav>
@@ -523,16 +523,16 @@ Just the letter (A-Z) or "unknown"`;
           </div>
         </div>
         <div className="w-96 h-full flex flex-col">
-          <div className="bg-gray-800 rounded-lg shadow-lg p-6 flex-1 overflow-hidden flex flex-col">
+          <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-lg shadow-lg p-6 flex-1 overflow-hidden flex flex-col">
             <h2 className="text-2xl font-bold mb-4 text-white">Recognized Text</h2>
-            <div className="flex-1 overflow-y-auto bg-gray-700 rounded-lg p-4">
+            <div className="flex-1 overflow-y-auto bg-black bg-opacity-20 rounded-lg p-4">
               <p className="text-xl text-white whitespace-pre-wrap break-words">{currentLetter || 'No text recognized yet'}</p>
             </div>
             <div className="mt-4 text-sm text-gray-300">
               {isRecording ? (isProcessing ? 'Processing...' : 'Recording...') : 'Click "Start Recording" to begin'}
             </div>
             {debugInfo && (
-              <div className="mt-4 p-4 bg-gray-700 rounded-lg text-sm text-white">
+              <div className="mt-4 p-4 bg-black bg-opacity-20 rounded-lg text-sm text-white">
                 <h3 className="font-semibold mb-2">Debug Info:</h3>
                 <div className="space-y-1">
                   <p>Hand Distance: {handDistance}</p>
