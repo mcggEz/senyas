@@ -21,6 +21,20 @@ class SocketService {
         }
     }
 
+    sendLandmarks(data: {
+        type: 'hand' | 'pose' | 'face';
+        landmarks: Array<{
+            x: number;
+            y: number;
+            z: number;
+            visibility?: number;
+        }>;
+    }) {
+        if (this.socket) {
+            this.socket.emit('landmarks', data);
+        }
+    }
+
     onRecognitionResult(callback: (result: any) => void) {
         if (this.socket) {
             this.socket.on('recognition-result', callback);
