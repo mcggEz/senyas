@@ -543,13 +543,13 @@ Just the letter (A-Z) or "unknown"`;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 flex flex-col">
-      <nav className="flex justify-between items-center p-4 bg-black bg-opacity-50 text-white">
+    <div className="min-h-screen bg-[#1E1E1E] flex flex-col">
+      <nav className="flex justify-between items-center p-4 bg-[#252526] text-[#D4D4D4] border-b border-[#333333]">
         <div className="text-xl font-bold">Senyas</div>
         <div>Notification</div>
       </nav>
       <div className="flex-1 flex items-center justify-center p-4 gap-8">
-        <div className="relative w-full max-w-3xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl">
+        <div className="relative w-full max-w-3xl aspect-video bg-[#252526] rounded-lg overflow-hidden shadow-2xl border border-[#333333]">
           <video 
             ref={videoeRef} 
             autoPlay
@@ -562,8 +562,8 @@ Just the letter (A-Z) or "unknown"`;
             className="w-full h-full object-cover"
           />
           {handDistance && (
-            <div className={`absolute top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full text-white font-medium ${
-              handDistance === 'good' ? 'bg-green-500' : 'bg-red-500'
+            <div className={`absolute top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full text-[#D4D4D4] font-medium ${
+              handDistance === 'good' ? 'bg-[#007ACC]' : 'bg-[#D83B01]'
             }`}>
               {handDistance === 'too_far' && 'Move your hand closer'}
               {handDistance === 'too_close' && 'Move your hand further'}
@@ -571,14 +571,14 @@ Just the letter (A-Z) or "unknown"`;
             </div>
           )}
           {isProcessing && (
-            <div className="absolute top-16 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full bg-blue-500 text-white font-medium">
+            <div className="absolute top-16 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full bg-[#007ACC] text-[#D4D4D4] font-medium">
               Processing...
             </div>
           )}
           <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-4">
             <button 
               onClick={toggleCamera} 
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full shadow-lg transition-all duration-200 flex items-center gap-2"
+              className="bg-[#007ACC] hover:bg-[#1B8AD0] text-[#D4D4D4] px-6 py-3 rounded-md shadow-lg transition-all duration-200 flex items-center gap-2"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
@@ -599,7 +599,7 @@ Just the letter (A-Z) or "unknown"`;
               <>
                 <button 
                   onClick={toggleRecording} 
-                  className={`${isRecording ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white px-6 py-3 rounded-full shadow-lg transition-all duration-200 flex items-center gap-2`}
+                  className={`${isRecording ? 'bg-[#D83B01] hover:bg-[#E84A1A]' : 'bg-[#107C10] hover:bg-[#1B8A1B]'} text-[#D4D4D4] px-6 py-3 rounded-md shadow-lg transition-all duration-200 flex items-center gap-2`}
                 >
                   <svg 
                     xmlns="http://www.w3.org/2000/svg" 
@@ -618,7 +618,7 @@ Just the letter (A-Z) or "unknown"`;
                 </button>
                 <button 
                   onClick={clearText}
-                  className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-full shadow-lg transition-all duration-200 flex items-center gap-2"
+                  className="bg-[#333333] hover:bg-[#404040] text-[#D4D4D4] px-6 py-3 rounded-md shadow-lg transition-all duration-200 flex items-center gap-2"
                 >
                   <svg 
                     xmlns="http://www.w3.org/2000/svg" 
@@ -636,16 +636,16 @@ Just the letter (A-Z) or "unknown"`;
           </div>
         </div>
         <div className="w-96 h-full flex flex-col">
-          <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-lg shadow-lg p-6 flex-1 overflow-hidden flex flex-col">
-            <h2 className="text-2xl font-bold mb-4 text-white">Recognized Text</h2>
-            <div className="flex-1 overflow-y-auto bg-black bg-opacity-20 rounded-lg p-4">
-              <p className="text-xl text-white whitespace-pre-wrap break-words">{currentLetter || 'No text recognized yet'}</p>
+          <div className="bg-[#252526] backdrop-blur-lg rounded-lg shadow-lg p-6 flex-1 overflow-hidden flex flex-col border border-[#333333]">
+            <h2 className="text-2xl font-bold mb-4 text-[#D4D4D4]">Recognized Text</h2>
+            <div className="flex-1 overflow-y-auto bg-[#1E1E1E] rounded-lg p-4 border border-[#333333]">
+              <p className="text-xl text-[#D4D4D4] whitespace-pre-wrap break-words">{currentLetter || 'No text recognized yet'}</p>
             </div>
-            <div className="mt-4 text-sm text-gray-300">
+            <div className="mt-4 text-sm text-[#858585]">
               {isRecording ? (isProcessing ? 'Processing...' : 'Recording...') : 'Click "Start Recording" to begin'}
             </div>
             {debugInfo && (
-              <div className="mt-4 p-4 bg-black bg-opacity-20 rounded-lg text-sm text-white">
+              <div className="mt-4 p-4 bg-[#1E1E1E] rounded-lg text-sm text-[#D4D4D4] border border-[#333333]">
                 <h3 className="font-semibold mb-2">Debug Info:</h3>
                 <div className="space-y-1">
                   <p>Hand Distance: {handDistance}</p>
@@ -659,9 +659,8 @@ Just the letter (A-Z) or "unknown"`;
                 </div>
               </div>
             )}
-            {/* Add Pose Landmarks Graph */}
             {poseLandmarks.length > 0 && (
-              <div className="mt-4 p-4 bg-black bg-opacity-20 rounded-lg text-sm text-white">
+              <div className="mt-4 p-4 bg-[#1E1E1E] rounded-lg text-sm text-[#D4D4D4] border border-[#333333]">
                 <h3 className="font-semibold mb-2">Pose Landmarks (X-Y Coordinates):</h3>
                 <div className="space-y-1 max-h-40 overflow-y-auto">
                   {poseLandmarks.map((landmark, index) => (
