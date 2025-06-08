@@ -430,130 +430,126 @@ Just the letter (A-Z) or "unknown"`;
   };
 
   return (
-    <>
-    <div className='flex flex-col h-screen'>
-      <nav className='flex justify-between items-center p-4 bg-gray-800 text-white'>
-        <div className='text-xl font-bold'>Senyas</div>
+    <div className="min-h-screen bg-gray-900 flex flex-col">
+      <nav className="flex justify-between items-center p-4 bg-gray-800 text-white">
+        <div className="text-xl font-bold">Senyas</div>
         <div>Notification</div>
       </nav>
-      <div className='flex-1 bg-gray-100'>
-        <div className='h-full flex items-center justify-center p-4 gap-8'>
-          <div className='relative w-full max-w-3xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl'>
-            <video 
-              ref={videoeRef} 
-              autoPlay
-              playsInline 
-              className='w-full h-full object-cover'
-              style={{ display: 'none' }}
-            />
-            <canvas 
-              ref={canvasRef}
-              className='w-full h-full object-cover'
-            />
-            {handDistance && (
-              <div className={`absolute top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full text-white font-medium ${
-                handDistance === 'good' ? 'bg-green-500' : 'bg-red-500'
-              }`}>
-                {handDistance === 'too_far' && 'Move your hand closer'}
-                {handDistance === 'too_close' && 'Move your hand further'}
-                {handDistance === 'good' && 'Good distance!'}
-              </div>
-            )}
-            {isProcessing && (
-              <div className='absolute top-16 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full bg-blue-500 text-white font-medium'>
-                Processing...
-              </div>
-            )}
-            <div className='absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-4'>
-              <button 
-                onClick={toggleCamera} 
-                className='bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full shadow-lg transition-all duration-200 flex items-center gap-2'
+      <div className="flex-1 flex items-center justify-center p-4 gap-8">
+        <div className="relative w-full max-w-3xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl">
+          <video 
+            ref={videoeRef} 
+            autoPlay
+            playsInline 
+            className="w-full h-full object-cover"
+            style={{ display: 'none' }}
+          />
+          <canvas 
+            ref={canvasRef}
+            className="w-full h-full object-cover"
+          />
+          {handDistance && (
+            <div className={`absolute top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full text-white font-medium ${
+              handDistance === 'good' ? 'bg-green-500' : 'bg-red-500'
+            }`}>
+              {handDistance === 'too_far' && 'Move your hand closer'}
+              {handDistance === 'too_close' && 'Move your hand further'}
+              {handDistance === 'good' && 'Good distance!'}
+            </div>
+          )}
+          {isProcessing && (
+            <div className="absolute top-16 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full bg-blue-500 text-white font-medium">
+              Processing...
+            </div>
+          )}
+          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-4">
+            <button 
+              onClick={toggleCamera} 
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full shadow-lg transition-all duration-200 flex items-center gap-2"
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-6 w-6" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
               >
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  className="h-6 w-6" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
+                {isCameraOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                )}
+              </svg>
+              <span className="text-lg font-medium">{isCameraOpen ? 'Stop Camera' : 'Start Camera'}</span>
+            </button>
+            {isCameraOpen && (
+              <>
+                <button 
+                  onClick={toggleRecording} 
+                  className={`${isRecording ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white px-6 py-3 rounded-full shadow-lg transition-all duration-200 flex items-center gap-2`}
                 >
-                  {isCameraOpen ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  )}
-                </svg>
-                <span className='text-lg font-medium'>{isCameraOpen ? 'Stop Camera' : 'Start Camera'}</span>
-              </button>
-              {isCameraOpen && (
-                <>
-                  <button 
-                    onClick={toggleRecording} 
-                    className={`${isRecording ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white px-6 py-3 rounded-full shadow-lg transition-all duration-200 flex items-center gap-2`}
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-6 w-6" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
                   >
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      className="h-6 w-6" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      stroke="currentColor"
-                    >
-                      {isRecording ? (
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      ) : (
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      )}
-                    </svg>
-                    <span className='text-lg font-medium'>{isRecording ? 'Stop Recording' : 'Start Recording'}</span>
-                  </button>
-                  <button 
-                    onClick={clearText}
-                    className='bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-full shadow-lg transition-all duration-200 flex items-center gap-2'
+                    {isRecording ? (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    ) : (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    )}
+                  </svg>
+                  <span className="text-lg font-medium">{isRecording ? 'Stop Recording' : 'Start Recording'}</span>
+                </button>
+                <button 
+                  onClick={clearText}
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-full shadow-lg transition-all duration-200 flex items-center gap-2"
+                >
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-6 w-6" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
                   >
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      className="h-6 w-6" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      stroke="currentColor"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                    <span className='text-lg font-medium'>Clear Text</span>
-                  </button>
-                </>
-              )}
-            </div>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  <span className="text-lg font-medium">Clear Text</span>
+                </button>
+              </>
+            )}
           </div>
-          <div className='w-96 h-full flex flex-col'>
-            <div className='bg-white rounded-lg shadow-lg p-6 flex-1 overflow-hidden flex flex-col'>
-              <h2 className='text-2xl font-bold mb-4 text-gray-800'>Recognized Text</h2>
-              <div className='flex-1 overflow-y-auto bg-gray-50 rounded-lg p-4'>
-                <p className='text-xl text-gray-700 whitespace-pre-wrap break-words'>{currentLetter || 'No text recognized yet'}</p>
-              </div>
-              <div className='mt-4 text-sm text-gray-500'>
-                {isRecording ? (isProcessing ? 'Processing...' : 'Recording...') : 'Click "Start Recording" to begin'}
-              </div>
-              {debugInfo && (
-                <div className='mt-4 p-4 bg-gray-100 rounded-lg text-sm'>
-                  <h3 className='font-semibold mb-2'>Debug Info:</h3>
-                  <div className='space-y-1'>
-                    <p>Hand Distance: {handDistance}</p>
-                    <p>Processing: {isProcessing ? 'Yes' : 'No'}</p>
-                    <p>Thumb: {debugInfo.fingerStates.thumb ? 'Extended' : 'Bent'} (Distance: {debugInfo.distances.thumbDistance.toFixed(3)})</p>
-                    <p>Index: {debugInfo.fingerStates.index ? 'Extended' : 'Bent'} (Distance: {debugInfo.distances.indexDistance.toFixed(3)})</p>
-                    <p>Middle: {debugInfo.fingerStates.middle ? 'Extended' : 'Bent'} (Distance: {debugInfo.distances.middleDistance.toFixed(3)})</p>
-                    <p>Ring: {debugInfo.fingerStates.ring ? 'Extended' : 'Bent'} (Distance: {debugInfo.distances.ringDistance.toFixed(3)})</p>
-                    <p>Pinky: {debugInfo.fingerStates.pinky ? 'Extended' : 'Bent'} (Distance: {debugInfo.distances.pinkyDistance.toFixed(3)})</p>
-                    <p>Curved: {debugInfo.fingerStates.isCurved ? 'Yes' : 'No'}</p>
-                  </div>
-                </div>
-              )}
+        </div>
+        <div className="w-96 h-full flex flex-col">
+          <div className="bg-gray-800 rounded-lg shadow-lg p-6 flex-1 overflow-hidden flex flex-col">
+            <h2 className="text-2xl font-bold mb-4 text-white">Recognized Text</h2>
+            <div className="flex-1 overflow-y-auto bg-gray-700 rounded-lg p-4">
+              <p className="text-xl text-white whitespace-pre-wrap break-words">{currentLetter || 'No text recognized yet'}</p>
             </div>
+            <div className="mt-4 text-sm text-gray-300">
+              {isRecording ? (isProcessing ? 'Processing...' : 'Recording...') : 'Click "Start Recording" to begin'}
+            </div>
+            {debugInfo && (
+              <div className="mt-4 p-4 bg-gray-700 rounded-lg text-sm text-white">
+                <h3 className="font-semibold mb-2">Debug Info:</h3>
+                <div className="space-y-1">
+                  <p>Hand Distance: {handDistance}</p>
+                  <p>Processing: {isProcessing ? 'Yes' : 'No'}</p>
+                  <p>Thumb: {debugInfo.fingerStates.thumb ? 'Extended' : 'Bent'} (Distance: {debugInfo.distances.thumbDistance.toFixed(3)})</p>
+                  <p>Index: {debugInfo.fingerStates.index ? 'Extended' : 'Bent'} (Distance: {debugInfo.distances.indexDistance.toFixed(3)})</p>
+                  <p>Middle: {debugInfo.fingerStates.middle ? 'Extended' : 'Bent'} (Distance: {debugInfo.distances.middleDistance.toFixed(3)})</p>
+                  <p>Ring: {debugInfo.fingerStates.ring ? 'Extended' : 'Bent'} (Distance: {debugInfo.distances.ringDistance.toFixed(3)})</p>
+                  <p>Pinky: {debugInfo.fingerStates.pinky ? 'Extended' : 'Bent'} (Distance: {debugInfo.distances.pinkyDistance.toFixed(3)})</p>
+                  <p>Curved: {debugInfo.fingerStates.isCurved ? 'Yes' : 'No'}</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
     </div>
-    </>
   );
 }
 
