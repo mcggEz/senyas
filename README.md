@@ -2,7 +2,7 @@
 
 ## About The Project
 
-Senyas is an American Sign Language (ASL) recognition system that combines computer vision and machine learning to provide real-time sign language translation. The project leverages MediaPipe's powerful hand tracking and face mesh capabilities, along with Google's Gemini AI, to create a comprehensive solution for ASL communication.
+Senyas is an American Sign Language (ASL) recognition system that combines computer vision and machine learning to provide real-time sign language translation. The project leverages MediaPipe's hand tracking and face mesh capabilities, and my custom made lstm model, to create a comprehensive solution for ASL communication.
 
 ## Built With
 - **React** - Frontend framework
@@ -11,7 +11,6 @@ Senyas is an American Sign Language (ASL) recognition system that combines compu
   - @mediapipe/hands
   - @mediapipe/pose
   - @mediapipe/face_mesh
-- **Google Gemini AI** - Enhanced ASL recognition
 - **Tailwind CSS** - Modern UI styling
 - **WebRTC** - Real-time video processing
 
