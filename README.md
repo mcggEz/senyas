@@ -49,4 +49,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 - MediaPipe for their excellent computer vision solutions
-- Google Gemini AI for advanced language processing
+
